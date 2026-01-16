@@ -5,14 +5,13 @@ import { Autoplay } from "swiper/modules";
 
 import "swiper/css";
 
-import img1 from "../../../assets/bbl_autoloan_march_2021.webp";
-import img2 from "../../../assets/Business-Loans-for-startup-1.jpg";
-import img3 from "../../../assets/Home-Loan-Web-Banner.jpg";
-import img4 from "../../../assets/bbl_autoloan_march_2021.webp";
-import img5 from "../../../assets/Business-Loans-for-startup-1.jpg";
-import img6 from "../../../assets/Home-Loan-Web-Banner.jpg";
+import img1 from "../../../assets/b1.jpg";
+import img2 from "../../../assets/b2.webp";
+import img3 from "../../../assets/b3.jpg";
+import img4 from "../../../assets/b4.jpg";
 
-const images = [img1, img2, img3, img4, img5, img6];
+
+const images = [img1, img2, img3, img4, ];
 
 const Pic = () => {
   return (
