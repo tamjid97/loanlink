@@ -6,12 +6,14 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
 import img1 from "../../../assets/b1.jpg";
-import img2 from "../../../assets/b2.webp";
+import img2 from "../../../assets/b2.jpg";
 import img3 from "../../../assets/b3.jpg";
-import img4 from "../../../assets/b4.jpg";
+import img4 from "../../../assets/b4.webp";
+import img5 from "../../../assets/a1.jpeg";
+import img6 from "../../../assets/a2.webp";
 
 
-const images = [img1, img2, img3, img4, ];
+const images = [img1, img2, img3, img4, img5, img6];
 
 const Pic = () => {
   return (
