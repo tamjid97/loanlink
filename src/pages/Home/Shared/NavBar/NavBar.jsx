@@ -163,7 +163,7 @@ const NavBar = () => {
           </button>
 
           {/* Apply Now Button */}
-          <a className={`btn btn-sm text-white ${getButtonColor()}`}>Apply Now</a>
+          <Link to="/login" className={`btn btn-sm text-white ${getButtonColor()}`}>Login</Link>
         </div>
 
       </div>
