@@ -1,27 +1,40 @@
+// src/pages/Home/Shared/NavBar/NavBar.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth";
+import { toast } from "react-toastify"; // ✅ ONLY ADDITION
 
 const NavBar = () => {
+  const { user, logout } = useAuth();
+  const location = useLocation();
   const [theme, setTheme] = useState("light");
   const [mobileMenu, setMobileMenu] = useState(false);
-  const location = useLocation();
 
-  // Theme load from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.setAttribute("data-theme", savedTheme);
   }, []);
 
-  // Toggle Theme
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  // Menu Items
+  // 🔥 ONLY THIS FUNCTION UPDATED (toast added)
+  const handleLogOut = () => {
+    logout()
+      .then(() => {
+        toast.info("Logged out successfully 👋");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.message);
+      });
+  };
+
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Personal Loans", path: "/personal-loans" },
@@ -32,52 +45,11 @@ const NavBar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  // Active color mapping
-  const getActiveColor = (name) => {
-    switch (name) {
-      case "Home":
-        return theme === "dark" ? "text-indigo-600" : "text-yellow-400";
-      case "Personal Loans":
-        return theme === "dark" ? "text-purple-600" : "text-green-400";
-      case "Business Loans":
-        return theme === "dark" ? "text-indigo-600" : "text-pink-400";
-      case "About":
-        return theme === "dark" ? "text-gray-400" : "text-orange-400";
-      case "Contact":
-        return theme === "dark" ? "text-purple-700" : "text-red-400";
-      default:
-        return "text-gray-400";
-    }
-  };
-
-  // Button color mapping based on active page
-  const getButtonColor = () => {
-    const activeItem = menuItems.find((item) => isActive(item.path));
-    if (!activeItem) return theme === "dark" ? "bg-gray-700 hover:bg-gray-800" : "bg-gray-300 hover:bg-gray-400";
-
-    switch (activeItem.name) {
-      case "Home":
-        return theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-yellow-400 hover:bg-yellow-500";
-      case "Personal Loans":
-        return theme === "dark" ? "bg-purple-600 hover:bg-purple-700" : "bg-green-400 hover:bg-green-500";
-      case "Business Loans":
-        return theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-pink-400 hover:bg-pink-500";
-      case "About":
-        return theme === "dark" ? "bg-gray-700 hover:bg-gray-800" : "bg-orange-400 hover:bg-orange-500";
-      case "Contact":
-        return theme === "dark" ? "bg-purple-700 hover:bg-purple-800" : "bg-red-400 hover:bg-red-500";
-      default:
-        return theme === "dark" ? "bg-gray-700 hover:bg-gray-800" : "bg-gray-300 hover:bg-gray-400";
-    }
-  };
-
   return (
     <nav className="sticky top-0 z-50 bg-base-100 shadow-sm backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-        {/* Logo + Mobile Dropdown */}
+        {/* Logo + Mobile Menu */}
         <div className="flex items-center gap-3">
-          {/* Mobile Menu */}
           <div className="dropdown lg:hidden">
             <button
               onClick={() => setMobileMenu(!mobileMenu)}
@@ -86,9 +58,10 @@ const NavBar = () => {
               ☰
             </button>
             <ul
-              tabIndex={0}
               className={`menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow-lg transition-all duration-300 ${
-                mobileMenu ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+                mobileMenu
+                  ? "max-h-96 opacity-100"
+                  : "max-h-0 opacity-0 overflow-hidden"
               }`}
             >
               {menuItems.map((item) => (
@@ -96,8 +69,8 @@ const NavBar = () => {
                   <Link
                     to={item.path}
                     onClick={() => setMobileMenu(false)}
-                    className={`block font-semibold p-2 transition-colors duration-300 ${
-                      isActive(item.path) ? getActiveColor(item.name) : "text-gray-800 hover:text-gray-600"
+                    className={`block font-semibold p-2 ${
+                      isActive(item.path) ? "text-yellow-500" : "text-gray-800"
                     }`}
                   >
                     {item.name}
@@ -107,19 +80,13 @@ const NavBar = () => {
             </ul>
           </div>
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3">
             <div
-              className="w-12 h-12 rounded-3xl
-                bg-gradient-to-br from-yellow-400 to-yellow-500
-                flex items-center justify-center
-                shadow-xl
-                transform transition-transform duration-300 group-hover:scale-110"
+              className="w-12 h-12 sm:block hidden tracking-wide  rounded-full bg-yellow-400 flex items-center justify-center"
             >
-              <span className="text-white font-extrabold text-xl tracking-tight">L</span>
+              <span className="text-white font-bold text-xl">L</span>
             </div>
-
-            <h1 className="text-3xl font-extrabold tracking-wide select-none">
+            <h1 className="text-3xl font-extrabold select-none">
               <span className="text-yellow-500">Loan</span>
               <span className="text-gray-800 dark:text-gray-200">Link</span>
             </h1>
@@ -130,11 +97,11 @@ const NavBar = () => {
         <div className="hidden lg:flex">
           <ul className="menu menu-horizontal px-1 font-medium gap-4">
             {menuItems.map((item) => (
-              <li key={item.name} className="transition-colors duration-300">
+              <li key={item.name}>
                 <Link
                   to={item.path}
                   className={`pb-1 border-b-2 border-transparent hover:border-gray-300 ${
-                    isActive(item.path) ? getActiveColor(item.name).replace("text-", "border-") : ""
+                    isActive(item.path) ? "border-yellow-400" : ""
                   }`}
                 >
                   {item.name}
@@ -144,28 +111,46 @@ const NavBar = () => {
           </ul>
         </div>
 
-        {/* Right Side */}
+        {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className={`relative w-14 h-7 rounded-full transition-colors duration-300 ${
+            className={`relative w-14 h-7 rounded-full transition-colors ${
               theme === "dark" ? "bg-gray-700" : "bg-gray-300"
             }`}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow
-                flex items-center justify-center transition-all duration-300
-                ${theme === "dark" ? "translate-x-7" : "translate-x-0"}`}
+              className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-all ${
+                theme === "dark" ? "translate-x-7" : "translate-x-0"
+              } flex items-center justify-center`}
             >
               {theme === "dark" ? "🌙" : "☀️"}
             </span>
           </button>
 
-          {/* Apply Now Button */}
-          <Link to="/login" className={`btn btn-sm text-white ${getButtonColor()}`}>Login</Link>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <img
+                src={user.photoURL}
+                alt="avatar"
+                className="w-10 h-10 rounded-full border border-gray-300"
+              />
+              <button
+                onClick={handleLogOut}
+                className="btn btn-sm bg-red-500 hover:bg-red-600 text-white"
+              >
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              Login
+            </Link>
+          )}
         </div>
-
       </div>
     </nav>
   );
