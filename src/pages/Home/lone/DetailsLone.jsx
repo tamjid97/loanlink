@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const DetailsLone = () => {
@@ -84,13 +84,17 @@ const DetailsLone = () => {
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
                     Interest Rate
                   </td>
-                  <td className="px-4 py-3 text-gray-800">{loan.interestRate}%</td>
+                  <td className="px-4 py-3 text-gray-800">
+                    {loan.interestRate}%
+                  </td>
                 </tr>
                 <tr className="hover:bg-gray-50 transition-colors">
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
                     Max Limit
                   </td>
-                  <td className="px-4 py-3 text-gray-800">${loan.maxLoanLimit}</td>
+                  <td className="px-4 py-3 text-gray-800">
+                    ${loan.maxLoanLimit}
+                  </td>
                 </tr>
                 <tr className="hover:bg-gray-50 transition-colors">
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
@@ -117,9 +121,12 @@ const DetailsLone = () => {
 
           {/* Apply Button */}
           <div className="mt-6">
-            <button className="btn btn-gradient w-full rounded-xl hover:scale-105 transition-transform duration-300 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg">
+            <Link
+              to={`/apply-loan/${loan._id}`}
+              className="btn btn-gradient w-full rounded-xl hover:scale-105 transition-transform duration-300 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg"
+            >
               Apply Now
-            </button>
+            </Link>
           </div>
         </div>
       </div>
