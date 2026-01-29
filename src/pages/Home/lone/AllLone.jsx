@@ -28,17 +28,14 @@ const AllLone = () => {
 
   if (error) {
     return (
-      <p className="text-center text-red-500 mt-10">
-        Failed to load loans
-      </p>
+      <p className="text-center text-red-500 mt-10">Failed to load loans</p>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <h2 className="text-4xl font-bold text-center mb-12">
-        All Loans{" "}
-        <span className="text-primary">({allLoans.length})</span>
+        All Loans <span className="text-primary">({allLoans.length})</span>
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -61,9 +58,7 @@ const AllLone = () => {
 
             {/* Card Body */}
             <div className="p-6 flex flex-col flex-grow">
-              <h3 className="text-xl font-semibold mb-2">
-                {loan.loanTitle}
-              </h3>
+              <h3 className="text-xl font-semibold mb-2">{loan.loanTitle}</h3>
 
               <p className="text-gray-500 mb-4">{loan.category}</p>
 
@@ -78,7 +73,7 @@ const AllLone = () => {
 
               {/* Button */}
               <Link
-                to={`/loan/${loan._id}`}
+                to={`/Lone-Details/${loan._id}`} // <- path + id
                 className="mt-auto btn btn-primary w-full rounded-xl hover:scale-105 transition-transform duration-300"
               >
                 View Details

@@ -9,6 +9,7 @@ import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
 import AllLone from "../pages/Home/lone/AllLone";
+import DetailsLone from "../pages/Home/lone/DetailsLone";
 
 export const router = createBrowserRouter([
   {
@@ -22,11 +23,18 @@ export const router = createBrowserRouter([
       {
         path: "All-Loans",
         element: (
-          
             <AllLone></AllLone>
-          
         ),
       },
+      {
+  path: "Lone-Details/:id",  
+  element: (
+    <PrivateRoute>
+      <DetailsLone />
+    </PrivateRoute>
+  ),
+}
+
     ],
   },
   {
