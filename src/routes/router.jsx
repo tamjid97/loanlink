@@ -8,6 +8,7 @@ import Register from "../pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
+import AllLone from "../pages/Home/lone/AllLone";
 
 export const router = createBrowserRouter([
   {
@@ -16,32 +17,45 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: Home
-      }
-    ]
+        Component: Home,
+      },
+      {
+        path: "All-Loans",
+        element: (
+          
+            <AllLone></AllLone>
+          
+        ),
+      },
+    ],
   },
   {
-    path: '/',
+    path: "/",
     Component: AuthLayout,
     children: [
       {
-        path: 'login',
+        path: "login",
         Component: Login,
       },
       {
-        path: 'register',
+        path: "register",
         Component: Register,
-      }
-    ]
+      },
+    ],
   },
   {
-    path: 'dashboard',
-    element: <PrivateRoute>  <DashboardLayout></DashboardLayout> </PrivateRoute>,
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        {" "}
+        <DashboardLayout></DashboardLayout>{" "}
+      </PrivateRoute>
+    ),
     children: [
       {
-        path: 'Add-Loan',
-        Component: AddLoan
-      }
-    ]
-  }
+        path: "Add-Loan",
+        Component: AddLoan,
+      },
+    ],
+  },
 ]);
