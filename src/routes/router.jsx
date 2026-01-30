@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import RootLayout from "../layouts/RootLayout";
+
 import Home from "../pages/Home/Home/Home";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Auth/Login/Login";
@@ -11,15 +11,23 @@ import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
 import AllLone from "../pages/Home/lone/AllLone";
 import DetailsLone from "../pages/Home/lone/DetailsLone";
 import ApplyLons from "../pages/Home/lone/ApplyLons";
+import RootLayout from "../pages/Auth/Login/RootLayout";
+import AllLones from "../pages/Dashboard/LonePages/AllLones";
+import ApplicationLon from "../pages/Dashboard/ApplicationLon";
+import ManageLoans from "../pages/Dashboard/LonePages/ManageLoans";
+import pendingLoans from "../pages/Dashboard/LonePages/pendingLoans";
+import ApprovedLoans from "../pages/Dashboard/LonePages/ApprovedLoans";
+import MyLoans from "../pages/Dashboard/LonePages/MyLoans";
+import MyProfile from "../pages/Dashboard/LonePages/MyProfile";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: RootLayout,
+    element: <RootLayout></RootLayout>,
     children: [
       {
         index: true,
-        Component: Home,
+        element: <Home></Home>,
       },
       {
         path: "All-Loans",
@@ -73,6 +81,34 @@ export const router = createBrowserRouter([
       {
         path: "Add-Loan",
         Component: AddLoan,
+      },
+      {
+        path: "All-Loans",
+        Component: AllLones,
+      },
+      {
+        path: "Application-Loans",
+        Component: ApplicationLon,
+      },
+      {
+        path: "Manage-Loans",
+        Component: ManageLoans,
+      },
+      {
+        path: "pending-loans",
+        Component: pendingLoans,
+      },
+      {
+        path: "approved-loans",
+        Component: ApprovedLoans,
+      },
+      {
+        path: "My-Loans",
+        Component: MyLoans,
+      },
+      {
+        path: "My-Profile",
+        Component: MyProfile,
       },
     ],
   },
