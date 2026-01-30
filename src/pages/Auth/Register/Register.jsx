@@ -35,6 +35,9 @@ const Register = () => {
         photoURL,
       });
 
+      // Role info saved in your backend if needed
+      console.log("Selected Role:", data.role);
+
       toast.success("Registration successful 🎉");
       navigate("/");
     } catch (err) {
@@ -98,6 +101,18 @@ const Register = () => {
               Must contain uppercase & lowercase
             </p>
           )}
+
+          {/* 🔹 New Role Dropdown */}
+          <label className="label">Role</label>
+          <select
+            {...register("role", { required: true })}
+            className="select select-bordered w-full"
+          >
+            <option value="">Select Role</option>
+            <option value="borrower">Borrower</option>
+            <option value="manager">Manager</option>
+          </select>
+          {errors.role && <p className="text-red-500">Role is required</p>}
 
           <button className="btn btn-neutral mt-4">Register</button>
         </fieldset>

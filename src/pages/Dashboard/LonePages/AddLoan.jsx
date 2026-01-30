@@ -2,17 +2,13 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Swal from "sweetalert2";
+import useAuth from "../../../hooks/useAuth";
 
 const AddLoan = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-  } = useForm();
-
+  const { user } = useAuth(); // 🔹 logged-in user
+  const { register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
 
-  // ফর্ম সাবমিট হ্যান্ডলার
   const submitLoan = async (data) => {
     setLoading(true);
     try {
@@ -22,22 +18,25 @@ const AddLoan = () => {
       if (data.loanImage && data.loanImage[0]) {
         const formData = new FormData();
         formData.append("image", data.loanImage[0]);
-
         const imgRes = await axios.post(
           `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`,
           formData
         );
-
         loanImageURL = imgRes.data.data.url;
       }
 
+      // 🔹 logged-in user info automatically added
       const finalData = {
         ...data,
         loanImage: loanImageURL,
-        date: new Date().toLocaleDateString(),
+        createdBy: {
+          name: user?.displayName || "Unknown",
+          email: user?.email || "",
+        },
+        showOnHome: !!data.showOnHome,
+        createdAt: new Date(),
       };
 
-      // Confirm SweetAlert
       const result = await Swal.fire({
         title: "Are you sure?",
         text: "Do you want to add this loan?",
@@ -45,24 +44,18 @@ const AddLoan = () => {
         showCancelButton: true,
         confirmButtonText: "Yes, add it!",
         cancelButtonText: "Cancel",
-        reverseButtons: true,
       });
 
       if (result.isConfirmed) {
-        // POST to backend
-        const res = await axios.post("http://localhost:3000/loan", finalData);
-        console.log("Saved in DB 👉", res.data);
-
-        await Swal.fire({
+        await axios.post("http://localhost:3000/loan", finalData);
+        Swal.fire({
           title: "Success!",
           text: "Loan added successfully!",
           icon: "success",
           confirmButtonText: "OK",
         });
-
         reset();
       }
-
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -79,13 +72,12 @@ const AddLoan = () => {
   return (
     <div className="min-h-screen bg-base-200 py-10">
       <div className="max-w-4xl mx-auto bg-base-100 rounded-2xl shadow-lg p-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold text-primary">Add New Loan</h2>
-          <p className="text-gray-500 mt-2">Fill out the form to create a new loan product</p>
-        </div>
+        <h2 className="text-4xl font-bold text-primary text-center mb-4">
+          Add New Loan
+        </h2>
 
         <form onSubmit={handleSubmit(submitLoan)} className="space-y-6">
-          {/* Grid Section */}
+          {/* Loan Title & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="label font-semibold">Loan Title</label>
@@ -99,10 +91,7 @@ const AddLoan = () => {
 
             <div>
               <label className="label font-semibold">Category</label>
-              <select
-                {...register("category", { required: true })}
-                className="select select-bordered w-full"
-              >
+              <select {...register("category", { required: true })} className="select select-bordered w-full">
                 <option value="">Select category</option>
                 <option value="Personal">Personal Loan</option>
                 <option value="Business">Business Loan</option>
@@ -110,7 +99,10 @@ const AddLoan = () => {
                 <option value="Home">Home Loan</option>
               </select>
             </div>
+          </div>
 
+          {/* Interest Rate & Max Loan Limit */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="label font-semibold">Interest Rate (%)</label>
               <input
@@ -133,6 +125,7 @@ const AddLoan = () => {
             </div>
           </div>
 
+          {/* Description */}
           <div>
             <label className="label font-semibold">Description</label>
             <textarea
@@ -142,17 +135,8 @@ const AddLoan = () => {
             />
           </div>
 
+          {/* EMI Plans & Required Documents */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="label font-semibold">Required Documents</label>
-              <input
-                type="text"
-                {...register("requiredDocuments", { required: true })}
-                placeholder="NID, Bank Statement, Salary Slip"
-                className="input input-bordered w-full"
-              />
-            </div>
-
             <div>
               <label className="label font-semibold">EMI Plans</label>
               <input
@@ -162,8 +146,18 @@ const AddLoan = () => {
                 className="input input-bordered w-full"
               />
             </div>
+            <div>
+              <label className="label font-semibold">Required Documents</label>
+              <input
+                type="text"
+                {...register("requiredDocuments", { required: true })}
+                placeholder="NID, Bank Statement, Salary Slip"
+                className="input input-bordered w-full"
+              />
+            </div>
           </div>
 
+          {/* Loan Image & Show on Home */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="label font-semibold">Loan Image</label>
@@ -173,36 +167,15 @@ const AddLoan = () => {
                 className="file-input file-input-bordered w-full"
               />
             </div>
-
-            <div>
-              <label className="label font-semibold">Date</label>
-              <input
-                type="text"
-                value={new Date().toLocaleDateString()}
-                readOnly
-                className="input input-bordered w-full bg-base-200"
-              />
+            <div className="flex items-center gap-4 mt-6">
+              <input type="checkbox" {...register("showOnHome")} className="toggle toggle-success" />
+              <span className="font-medium">Show this loan on Home page</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 mt-4">
-            <input
-              type="checkbox"
-              {...register("showOnHome")}
-              className="toggle toggle-success"
-            />
-            <span className="font-medium">Show this loan on Home page</span>
-          </div>
-
-          <div className="pt-6">
-            <button
-              type="submit"
-              className="btn btn-primary w-full text-lg"
-              disabled={loading}
-            >
-              {loading ? "Adding Loan..." : "Add Loan"}
-            </button>
-          </div>
+          <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
+            {loading ? "Adding Loan..." : "Add Loan"}
+          </button>
         </form>
       </div>
     </div>

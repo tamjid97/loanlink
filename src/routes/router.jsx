@@ -1,17 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
-
 import Home from "../pages/Home/Home/Home";
-import AuthLayout from "../layouts/AuthLayout";
-import Login from "../pages/Auth/Login/Login";
-import Register from "../pages/Auth/Register/Register";
-import PrivateRoute from "./PrivateRoute";
-import DashboardLayout from "../layouts/DashboardLayout";
-import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
 import AllLone from "../pages/Home/lone/AllLone";
 import DetailsLone from "../pages/Home/lone/DetailsLone";
 import ApplyLons from "../pages/Home/lone/ApplyLons";
-import RootLayout from "../pages/Auth/Login/RootLayout";
+
+import AuthLayout from "../layouts/AuthLayout";
+import Login from "../pages/Auth/Login/Login";
+import Register from "../pages/Auth/Register/Register";
+
+import PrivateRoute from "./PrivateRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
+import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
 import AllLones from "../pages/Dashboard/LonePages/AllLones";
 import ApplicationLon from "../pages/Dashboard/ApplicationLon";
 import ManageLoans from "../pages/Dashboard/LonePages/ManageLoans";
@@ -20,96 +20,99 @@ import ApprovedLoans from "../pages/Dashboard/LonePages/ApprovedLoans";
 import MyLoans from "../pages/Dashboard/LonePages/MyLoans";
 import MyProfile from "../pages/Dashboard/LonePages/MyProfile";
 
+import RootLayout from "../pages/Auth/Login/RootLayout";
+
 export const router = createBrowserRouter([
+  // 🌐 Public routes (Home & All Loans)
   {
     path: "/",
-    element: <RootLayout></RootLayout>,
+    element: <RootLayout />,
     children: [
       {
         index: true,
-        element: <Home></Home>,
+        element: <Home />,
       },
       {
-        path: "All-Loans",
+        path: "All-Loans", // 🔹 Public route
+        element: <AllLone />,
+      },
+      {
+        path: "Lone-Details/:id",
         element: (
-            <AllLone></AllLone>
+          <PrivateRoute>
+            <DetailsLone />
+          </PrivateRoute>
         ),
       },
       {
-  path: "Lone-Details/:id",  
-  element: (
-    <PrivateRoute>
-      <DetailsLone />
-    </PrivateRoute>
-  ),
-},
-{
-  path: "apply-loan/:id",
-  element: (
-    <PrivateRoute>
-      <ApplyLons />
-    </PrivateRoute>
-  ),
-}
-
-
+        path: "apply-loan/:id",
+        element: (
+          <PrivateRoute>
+            <ApplyLons />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
+
+  // 📝 Auth routes (Login/Register)
   {
     path: "/",
-    Component: AuthLayout,
+    element: <AuthLayout />,
     children: [
       {
         path: "login",
-        Component: Login,
+        element: <Login />,
       },
       {
         path: "register",
-        Component: Register,
+        element: <Register />,
       },
     ],
   },
+
+  // 📊 Dashboard routes (Private)
   {
     path: "dashboard",
     element: (
       <PrivateRoute>
-        {" "}
-        <DashboardLayout></DashboardLayout>{" "}
+        <DashboardLayout />
       </PrivateRoute>
     ),
     children: [
       {
         path: "Add-Loan",
-        Component: AddLoan,
+        element: <AddLoan />,
       },
       {
         path: "All-Loans",
-        Component: AllLones,
+        element: <AllLones />,
       },
       {
         path: "Application-Loans",
-        Component: ApplicationLon,
+        element: <ApplicationLon />,
       },
       {
         path: "Manage-Loans",
-        Component: ManageLoans,
+        element: <ManageLoans />,
       },
       {
         path: "pending-loans",
-        Component: pendingLoans,
+        element: <pendingLoans />,
       },
       {
         path: "approved-loans",
-        Component: ApprovedLoans,
+        element: <ApprovedLoans />,
       },
       {
         path: "My-Loans",
-        Component: MyLoans,
+        element: <MyLoans />,
       },
       {
         path: "My-Profile",
-        Component: MyProfile,
+        element: <MyProfile />,
       },
     ],
   },
 ]);
+  
