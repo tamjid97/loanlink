@@ -1,15 +1,22 @@
 import React from "react";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, Outlet } from "react-router-dom";
+
+// ✅ React Icons imports
 import { BiAddToQueue } from "react-icons/bi";
 import { LuWalletCards } from "react-icons/lu";
-import { MdOutlineAppShortcut } from "react-icons/md";
+import { MdOutlineAppShortcut, MdOutlinePendingActions } from "react-icons/md";
 import { SiNginxproxymanager } from "react-icons/si";
-import { MdOutlinePendingActions } from "react-icons/md";
 import { FcApproval } from "react-icons/fc";
 import { GiAnatomy } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
 
+import useRole from "../hooks/useRole";
+
 const DashboardLayout = () => {
+  const { role, isLoading } = useRole();
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -21,7 +28,6 @@ const DashboardLayout = () => {
             aria-label="open sidebar"
             className="btn btn-square btn-ghost"
           >
-            {/* Sidebar toggle icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -40,13 +46,12 @@ const DashboardLayout = () => {
           <div className="px-4">
             <h1 className="text-2xl font-extrabold tracking-wide select-none">
               <span className="text-yellow-500">Loan</span>
-              <span className="text-gray-800  dark:text-gray-200">Link</span>
+              <span className="text-gray-800 dark:text-gray-200">Link</span>
             </h1>
           </div>
         </nav>
-        {/* Page content here */}
 
-        <Outlet></Outlet>
+        <Outlet />
       </div>
 
       <div className="drawer-side is-drawer-close:overflow-visible">
@@ -56,16 +61,14 @@ const DashboardLayout = () => {
           className="drawer-overlay"
         ></label>
         <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
-          {/* Sidebar content here */}
           <ul className="menu w-full grow">
-            {/* List item */}
+            {/* Homepage - সব ইউজারের জন্য */}
             <li>
               <Link
                 to="/"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Homepage"
               >
-                {/* Home icon */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -83,94 +86,65 @@ const DashboardLayout = () => {
               </Link>
             </li>
 
-            {/* our dasbosrd liks */}
-            <li>
-              <NavLink to="/dashboard/Add-Loan">
-                <BiAddToQueue />
-                <span className="is-drawer-close:hidden">Add Loan</span>
-              </NavLink>
-            </li>
+            {/* Admin only */}
+            {role === "admin" && (
+              <>
+                <li>
+                  <Link to="/dashboard/All-Loans">
+                    <LuWalletCards />
+                    <span className="is-drawer-close:hidden">All Loans</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/Application-Loans">
+                    <MdOutlineAppShortcut />
+                    <span className="is-drawer-close:hidden">Loan Applications</span>
+                  </Link>
+                </li>
+              </>
+            )}
 
-            {/* List item */}
+            {/* Manager only */}
+            {role === "manager" && (
+              <>
+                <li>
+                  <Link to="/dashboard/Add-Loan">
+                    <BiAddToQueue />
+                    <span className="is-drawer-close:hidden">Add Loan</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/Manage-Loans">
+                    <SiNginxproxymanager />
+                    <span className="is-drawer-close:hidden">Manage Loans</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/pending-loans">
+                    <MdOutlinePendingActions />
+                    <span className="is-drawer-close:hidden">Pending Loans</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/approved-loans">
+                    <FcApproval />
+                    <span className="is-drawer-close:hidden">Approved Loans</span>
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {/* My Loans/Profile - সব ইউজারের জন্য */}
             <li>
-              <Link
-                to="/dashboard/All-Loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Settings"
-              >
-                {/* Settings icon */}
-                <LuWalletCards />
-                <span className="is-drawer-close:hidden">All lone</span>
-              </Link>
-            </li>
-            {/* lone application */}
-            <li>
-              <Link
-                to="/dashboard/Application-Loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Application Loans"
-              >
-                {/* Settings icon */}
-                <MdOutlineAppShortcut />
-                <span className="is-drawer-close:hidden">
-                  {" "}
-                  Loan Applications
-                </span>
-              </Link>
-            </li>
-            {/* Manage-Loans*/}
-            <li>
-              <Link
-                to="/dashboard/Manage-Loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Manage Loans"
-              >
-                <SiNginxproxymanager />
-                <span className="is-drawer-close:hidden"> Manage Loans</span>
-              </Link>
-            </li>
-            {/* pending Loans */}
-            <li>
-              <Link
-                to="/dashboard/pending-loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Pending Loans"
-              >
-                <MdOutlinePendingActions />
-                <span className="is-drawer-close:hidden"> Pending Loans</span>
-              </Link>
-            </li>
-            {/* My Loans */}
-            <li>
-              <Link
-                to="/dashboard/My-Loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="My Loans"
-              >
+              <Link to="/dashboard/My-Loans">
                 <GiAnatomy />
-                <span className="is-drawer-close:hidden"> My Loans</span>
+                <span className="is-drawer-close:hidden">My Loans</span>
               </Link>
             </li>
-            {/* My Profile */}
             <li>
-              <Link
-                to="/dashboard/My-Profile"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="My Profile"
-              >
+              <Link to="/dashboard/My-Profile">
                 <CgProfile />
-                <span className="is-drawer-close:hidden"> My Profile</span>
-              </Link>
-            </li>
-            {/* approved-loans*/}
-            <li>
-              <Link
-                to="/dashboard/approved-loans"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Approved Loans"
-              >
-                <FcApproval />
-                <span className="is-drawer-close:hidden"> Approved Loans</span>
+                <span className="is-drawer-close:hidden">My Profile</span>
               </Link>
             </li>
           </ul>

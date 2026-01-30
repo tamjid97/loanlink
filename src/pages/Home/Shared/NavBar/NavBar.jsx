@@ -42,11 +42,22 @@ const NavBar = () => {
         </NavLink>
       </li>
 
-      {
-        user && <>
+      <li>
+        <NavLink
+          to="All-Loans"
+          className={({ isActive }) =>
+            isActive ? "text-yellow-500 font-bold" : ""
+          }
+        >
+          All-Loans
+        </NavLink>
+      </li>
+
+      {user && (
+        <>
           <li>
             <NavLink
-              to="/dashboard/Add-Loan"
+              to="dashboard"
               className={({ isActive }) =>
                 isActive ? "text-yellow-500 font-bold" : ""
               }
@@ -54,18 +65,8 @@ const NavBar = () => {
               Dashboard
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="All-Loans"
-              className={({ isActive }) =>
-                isActive ? "text-yellow-500 font-bold" : ""
-              }
-            >
-              All-Loans
-            </NavLink>
-          </li>
         </>
-      }
+      )}
     </>
   );
 
@@ -140,10 +141,7 @@ const NavBar = () => {
               </button>
             </div>
           ) : (
-            <Link
-              to="login"
-              className="btn btn-sm bg-blue-500 text-white"
-            >
+            <Link to="login" className="btn btn-sm bg-blue-500 text-white">
               Login
             </Link>
           )}

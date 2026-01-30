@@ -6,7 +6,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 
-const DashboardAllLoan = () => {
+const AllLoan = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
@@ -281,4 +281,4 @@ const DashboardAllLoan = () => {
   );
 };
 
-export default DashboardAllLoan;
+export default AllLoan;

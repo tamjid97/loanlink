@@ -15,36 +15,44 @@ const Register = () => {
 
   const { registerUser, updateUserProfile } = useAuth();
   const navigate = useNavigate();
+const handleRegistration = async (data) => {
+  try {
+    // 1️⃣ Image upload
+    const formData = new FormData();
+    formData.append("image", data.photo[0]);
 
-  const handleRegistration = async (data) => {
-    try {
-      // image upload
-      const formData = new FormData();
-      formData.append("image", data.photo[0]);
+    const img_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`;
+    const imgRes = await axios.post(img_API_URL, formData);
+    const photoURL = imgRes.data.data.url;
 
-      const img_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`;
-      const res = await axios.post(img_API_URL, formData);
-      const photoURL = res.data.data.url;
+    // 2️⃣ Firebase register
+    const result = await registerUser(data.email, data.password);
+    const user = result.user;
 
-      // firebase register
-      const user = await registerUser(data.email, data.password);
+    // 3️⃣ Update Firebase profile
+    await updateUserProfile({
+      displayName: data.name,
+      photoURL,
+    });
 
-      // update profile
-      await updateUserProfile({
-        displayName: data.name,
-        photoURL,
-      });
+    // 4️⃣ Save user to MongoDB ✅ (NEW PART)
+    const userInfo = {
+      name: data.name,
+      email: user.email,
+      role: data.role,
+      photoURL,
+    };
 
-      // Role info saved in your backend if needed
-      console.log("Selected Role:", data.role);
+    await axios.post("http://localhost:3000/users", userInfo);
 
-      toast.success("Registration successful 🎉");
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Registration failed");
-    }
-  };
+    toast.success("Registration successful 🎉");
+    navigate("/");
+  } catch (err) {
+    console.error(err);
+    toast.error("Registration failed");
+  }
+};
+
 
   return (
     <div className="card bg-base-100 w-full mx-auto max-w-sm shrink-0 shadow-2xl">

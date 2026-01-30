@@ -15,104 +15,67 @@ import AddLoan from "../pages/Dashboard/LonePages/AddLoan";
 import AllLones from "../pages/Dashboard/LonePages/AllLones";
 import ApplicationLon from "../pages/Dashboard/ApplicationLon";
 import ManageLoans from "../pages/Dashboard/LonePages/ManageLoans";
-import pendingLoans from "../pages/Dashboard/LonePages/pendingLoans";
+import PendingLoans from "../pages/Dashboard/LonePages/PendingLoans";
 import ApprovedLoans from "../pages/Dashboard/LonePages/ApprovedLoans";
 import MyLoans from "../pages/Dashboard/LonePages/MyLoans";
 import MyProfile from "../pages/Dashboard/LonePages/MyProfile";
 
 import RootLayout from "../pages/Auth/Login/RootLayout";
+import AdminRoute from "./AdminRoute";
+import ManagerRoute from "./ManagerRoute";
+import NotFound from "../pages/Dashboard/NotFound";
+
 
 export const router = createBrowserRouter([
-  // 🌐 Public routes (Home & All Loans)
+  // Public routes
   {
     path: "/",
     element: <RootLayout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "All-Loans", // 🔹 Public route
-        element: <AllLone />,
-      },
+      { index: true, element: <Home /> },
+      { path: "All-Loans", element: <AllLone /> },
       {
         path: "Lone-Details/:id",
-        element: (
-          <PrivateRoute>
-            <DetailsLone />
-          </PrivateRoute>
-        ),
+        element: <PrivateRoute><DetailsLone /></PrivateRoute>,
       },
       {
         path: "apply-loan/:id",
-        element: (
-          <PrivateRoute>
-            <ApplyLons />
-          </PrivateRoute>
-        ),
+        element: <PrivateRoute><ApplyLons /></PrivateRoute>,
       },
     ],
   },
 
-  // 📝 Auth routes (Login/Register)
+  // Auth
   {
     path: "/",
     element: <AuthLayout />,
     children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
     ],
   },
 
-  // 📊 Dashboard routes (Private)
+  // Dashboard
   {
     path: "dashboard",
-    element: (
-      <PrivateRoute>
-        <DashboardLayout />
-      </PrivateRoute>
-    ),
+    element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
-      {
-        path: "Add-Loan",
-        element: <AddLoan />,
-      },
-      {
-        path: "All-Loans",
-        element: <AllLones />,
-      },
-      {
-        path: "Application-Loans",
-        element: <ApplicationLon />,
-      },
-      {
-        path: "Manage-Loans",
-        element: <ManageLoans />,
-      },
-      {
-        path: "pending-loans",
-        element: <pendingLoans />,
-      },
-      {
-        path: "approved-loans",
-        element: <ApprovedLoans />,
-      },
-      {
-        path: "My-Loans",
-        element: <MyLoans />,
-      },
-      {
-        path: "My-Profile",
-        element: <MyProfile />,
-      },
+      // Admin-only
+      { path: "All-Loans", element: <AdminRoute><AllLones /></AdminRoute> },
+      { path: "Application-Loans", element: <AdminRoute><ApplicationLon /></AdminRoute> },
+
+      // Manager + Admin
+      { path: "Add-Loan", element: <ManagerRoute><AddLoan /></ManagerRoute> },
+      { path: "Manage-Loans", element: <ManagerRoute><ManageLoans /></ManagerRoute> },
+      { path: "pending-loans", element: <ManagerRoute><PendingLoans /></ManagerRoute> },
+      { path: "approved-loans", element: <ManagerRoute><ApprovedLoans /></ManagerRoute> },
+
+      // All users
+      { path: "My-Loans", element: <MyLoans /> },
+      { path: "My-Profile", element: <MyProfile /> },
     ],
   },
+
+  // Catch-all 404
+  { path: "*", element: <NotFound /> },
 ]);
-  
