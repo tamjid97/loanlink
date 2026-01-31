@@ -9,6 +9,7 @@ import { SiNginxproxymanager } from "react-icons/si";
 import { FcApproval } from "react-icons/fc";
 import { GiAnatomy } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
+import { MdManageAccounts } from "react-icons/md";
 
 import useRole from "../hooks/useRole";
 
@@ -97,11 +98,18 @@ const DashboardLayout = () => {
             {role === "admin" && (
               <>
                 <li>
+                  <Link to="/dashboard/manage-roles">
+                    <MdManageAccounts />
+                    <span className="is-drawer-close:hidden">Manage Roles</span>
+                  </Link>
+                </li>
+                <li>
                   <Link to="/dashboard/All-Loans">
                     <LuWalletCards />
                     <span className="is-drawer-close:hidden">All Loans</span>
                   </Link>
                 </li>
+
                 <li>
                   <Link to="/dashboard/Application-Loans">
                     <MdOutlineAppShortcut />
@@ -151,7 +159,8 @@ const DashboardLayout = () => {
             {isUser && (
               <li>
                 <Link to="/dashboard/My-Loans">
-                  <GiAnatomy /> <span className="is-drawer-close:hidden">My Loans</span>
+                  <GiAnatomy />{" "}
+                  <span className="is-drawer-close:hidden">My Loans</span>
                 </Link>
               </li>
             )}
@@ -159,7 +168,8 @@ const DashboardLayout = () => {
             {isUser && (
               <li>
                 <Link to="/dashboard/My-Profile">
-                  <CgProfile /> <span className="is-drawer-close:hidden">My Profile</span>
+                  <CgProfile />{" "}
+                  <span className="is-drawer-close:hidden">My Profile</span>
                 </Link>
               </li>
             )}

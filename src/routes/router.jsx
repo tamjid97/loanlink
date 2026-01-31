@@ -24,6 +24,7 @@ import RootLayout from "../pages/Auth/Login/RootLayout";
 import AdminRoute from "./AdminRoute";
 import ManagerRoute from "./ManagerRoute";
 import NotFound from "../pages/Dashboard/NotFound";
+import ManageUsers from "../pages/Dashboard/LonePages/ManageRole";
 
 
 export const router = createBrowserRouter([
@@ -63,6 +64,7 @@ export const router = createBrowserRouter([
       // Admin-only
       { path: "All-Loans", element: <AdminRoute><AllLones /></AdminRoute> },
       { path: "Application-Loans", element: <AdminRoute><ApplicationLon /></AdminRoute> },
+      { path: "manage-roles", element: <AdminRoute><ManageUsers /></AdminRoute> },
 
       // Manager + Admin
       { path: "Add-Loan", element: <AddLoan />},
