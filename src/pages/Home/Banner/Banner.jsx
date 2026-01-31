@@ -7,6 +7,7 @@ import imgb2 from "../../../assets/coins-8505363_1280.jpg";
 import imgb3 from "../../../assets/money-2696229_1280.jpg";
 import imgb4 from "../../../assets/Personal-Loan-1080x675.jpg";
 import imgb5 from "../../../assets/The-Pros-and-Cons-of-a-Bank-Loan-Desktop.png";
+import { Link } from "react-router";
 
 const slides = [
   {
@@ -82,7 +83,8 @@ const Banner = () => {
                   </p>
 
                   <div className="mt-8 flex justify-center">
-                    <button
+                    <Link
+                      to="apply-loan"
                       className="
                         px-8 py-3
                         rounded-full
@@ -97,7 +99,7 @@ const Banner = () => {
                       "
                     >
                       {slide.btn}
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
