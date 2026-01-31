@@ -20,6 +20,7 @@ const DashboardLayout = () => {
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+
       <div className="drawer-content">
         {/* Navbar */}
         <nav className="navbar w-full bg-base-300">
@@ -43,6 +44,7 @@ const DashboardLayout = () => {
               <path d="M14 10l2 2l-2 2"></path>
             </svg>
           </label>
+
           <div className="px-4">
             <h1 className="text-2xl font-extrabold tracking-wide select-none">
               <span className="text-yellow-500">Loan</span>
@@ -60,9 +62,10 @@ const DashboardLayout = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
+
         <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
           <ul className="menu w-full grow">
-            {/* Homepage - সব ইউজারের জন্য */}
+            {/* Homepage – সব ইউজার */}
             <li>
               <Link
                 to="/"
@@ -98,7 +101,9 @@ const DashboardLayout = () => {
                 <li>
                   <Link to="/dashboard/Application-Loans">
                     <MdOutlineAppShortcut />
-                    <span className="is-drawer-close:hidden">Loan Applications</span>
+                    <span className="is-drawer-close:hidden">
+                      Loan Applications
+                    </span>
                   </Link>
                 </li>
               </>
@@ -116,37 +121,49 @@ const DashboardLayout = () => {
                 <li>
                   <Link to="/dashboard/Manage-Loans">
                     <SiNginxproxymanager />
-                    <span className="is-drawer-close:hidden">Manage Loans</span>
+                    <span className="is-drawer-close:hidden">
+                      Manage Loans
+                    </span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/dashboard/pending-loans">
                     <MdOutlinePendingActions />
-                    <span className="is-drawer-close:hidden">Pending Loans</span>
+                    <span className="is-drawer-close:hidden">
+                      Pending Loans
+                    </span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/dashboard/approved-loans">
                     <FcApproval />
-                    <span className="is-drawer-close:hidden">Approved Loans</span>
+                    <span className="is-drawer-close:hidden">
+                      Approved Loans
+                    </span>
                   </Link>
                 </li>
               </>
             )}
 
-            {/* My Loans/Profile - সব ইউজারের জন্য */}
-            <li>
-              <Link to="/dashboard/My-Loans">
-                <GiAnatomy />
-                <span className="is-drawer-close:hidden">My Loans</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/dashboard/My-Profile">
-                <CgProfile />
-                <span className="is-drawer-close:hidden">My Profile</span>
-              </Link>
-            </li>
+            {/* My Loans – শুধুমাত্র user */}
+            {role === "user" && (
+              <li>
+                <Link to="/dashboard/My-Loans">
+                  <GiAnatomy />
+                  <span className="is-drawer-close:hidden">My Loans</span>
+                </Link>
+              </li>
+            )}
+
+            {/* My Profile – user + manager */}
+            {(role === "user" || role === "manager") && (
+              <li>
+                <Link to="/dashboard/My-Profile">
+                  <CgProfile />
+                  <span className="is-drawer-close:hidden">My Profile</span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>
