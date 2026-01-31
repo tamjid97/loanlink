@@ -65,10 +65,10 @@ export const router = createBrowserRouter([
       { path: "Application-Loans", element: <AdminRoute><ApplicationLon /></AdminRoute> },
 
       // Manager + Admin
-      { path: "Add-Loan", element: <ManagerRoute><AddLoan /></ManagerRoute> },
-      { path: "Manage-Loans", element: <ManagerRoute><ManageLoans /></ManagerRoute> },
-      { path: "pending-loans", element: <ManagerRoute><PendingLoans /></ManagerRoute> },
-      { path: "approved-loans", element: <ManagerRoute><ApprovedLoans /></ManagerRoute> },
+      { path: "Add-Loan", element: <AddLoan />},
+      { path: "Manage-Loans", element: <ManageLoans /> },
+      { path: "pending-loans", element: <PendingLoans />},
+      { path: "approved-loans", element: <ApprovedLoans /> },
 
       // All users
       { path: "My-Loans", element: <MyLoans /> },

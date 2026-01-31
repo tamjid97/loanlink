@@ -14,8 +14,12 @@ import useRole from "../hooks/useRole";
 
 const DashboardLayout = () => {
   const { role, isLoading } = useRole();
-
+  console.log("🔥 ROLE FROM useRole:", role);
   if (isLoading) return <div>Loading...</div>;
+
+  const normalizedRole = role?.toLowerCase();
+
+  const isUser = normalizedRole === "user" || normalizedRole === "borrower";
 
   return (
     <div className="drawer lg:drawer-open">
@@ -121,9 +125,7 @@ const DashboardLayout = () => {
                 <li>
                   <Link to="/dashboard/Manage-Loans">
                     <SiNginxproxymanager />
-                    <span className="is-drawer-close:hidden">
-                      Manage Loans
-                    </span>
+                    <span className="is-drawer-close:hidden">Manage Loans</span>
                   </Link>
                 </li>
                 <li>
@@ -146,11 +148,18 @@ const DashboardLayout = () => {
             )}
 
             {/* My Loans – শুধুমাত্র user */}
-            {role === "user" && (
+            {isUser && (
               <li>
                 <Link to="/dashboard/My-Loans">
-                  <GiAnatomy />
-                  <span className="is-drawer-close:hidden">My Loans</span>
+                  <GiAnatomy /> <span className="is-drawer-close:hidden">My Loans</span>
+                </Link>
+              </li>
+            )}
+
+            {isUser && (
+              <li>
+                <Link to="/dashboard/My-Profile">
+                  <CgProfile /> <span className="is-drawer-close:hidden">My Profile</span>
                 </Link>
               </li>
             )}
