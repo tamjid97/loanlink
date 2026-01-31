@@ -9,7 +9,7 @@ const SeceletRole = () => {
   const { data: loans = [], isLoading } = useQuery({
     queryKey: ["home-loans"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/loan/home");
+      const res = await axiosSecure.get("/loan/home"); // backend route
       return res.data;
     },
   });
@@ -21,7 +21,6 @@ const SeceletRole = () => {
       </div>
     );
 
-  // সর্বোচ্চ 6টি loan দেখাবো
   const displayedLoans = loans.slice(0, 6);
 
   return (
@@ -30,14 +29,12 @@ const SeceletRole = () => {
         Available Loans
       </h2>
 
-      {/* ----------- Loan Cards Grid ----------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayedLoans.map((loan) => (
           <div
             key={loan._id}
             className="flex flex-col bg-base-100 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
           >
-            {/* Loan Image */}
             <div className="h-56 w-full overflow-hidden rounded-t-2xl">
               <img
                 src={loan.loanImage || "https://i.ibb.co/6bQ7J7F/loan.jpg"}
@@ -46,7 +43,6 @@ const SeceletRole = () => {
               />
             </div>
 
-            {/* Card Body */}
             <div className="p-6 flex flex-col flex-grow">
               <h3 className="text-xl font-semibold mb-2 line-clamp-1">
                 {loan.loanTitle}
@@ -63,7 +59,6 @@ const SeceletRole = () => {
                 </span>
               </div>
 
-              {/* View Details Button */}
               <Link
                 to={`/Lone-Details/${loan._id}`}
                 className="btn btn-primary mt-auto w-full rounded-xl hover:scale-105 transition-transform duration-300"
@@ -75,7 +70,6 @@ const SeceletRole = () => {
         ))}
       </div>
 
-      {/* See All Button */}
       {loans.length > 6 && (
         <div className="flex justify-center mt-10">
           <Link
