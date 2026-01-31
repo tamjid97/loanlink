@@ -152,36 +152,33 @@ const DashboardLayout = () => {
                     </span>
                   </Link>
                 </li>
+                
+                <li>
+                  <Link to="/dashboard/user-Profile">
+                    <CgProfile />{" "}
+                    <span className="is-drawer-close:hidden">My Profile</span>
+                  </Link>
+                </li>
               </>
             )}
 
             {/* My Loans – শুধুমাত্র user */}
             {isUser && (
-              <li>
-                <Link to="/dashboard/My-Loans">
-                  <GiAnatomy />{" "}
-                  <span className="is-drawer-close:hidden">My Loans</span>
-                </Link>
-              </li>
-            )}
+              <>
+                <li>
+                  <Link to="/dashboard/My-Loans">
+                    <GiAnatomy />{" "}
+                    <span className="is-drawer-close:hidden">My Loans</span>
+                  </Link>
+                </li>
 
-            {isUser && (
-              <li>
-                <Link to="/dashboard/My-Profile">
-                  <CgProfile />{" "}
-                  <span className="is-drawer-close:hidden">My Profile</span>
-                </Link>
-              </li>
-            )}
-
-            {/* My Profile – user + manager */}
-            {(role === "user" || role === "manager") && (
-              <li>
-                <Link to="/dashboard/My-Profile">
-                  <CgProfile />
-                  <span className="is-drawer-close:hidden">My Profile</span>
-                </Link>
-              </li>
+                <li>
+                  <Link to="/dashboard/user-Profile">
+                    <CgProfile />{" "}
+                    <span className="is-drawer-close:hidden">My Profile</span>
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

@@ -25,6 +25,7 @@ import AdminRoute from "./AdminRoute";
 import ManagerRoute from "./ManagerRoute";
 import NotFound from "../pages/Dashboard/NotFound";
 import ManageUsers from "../pages/Dashboard/LonePages/ManageRole";
+import UserProfile from "../pages/Dashboard/UserProfile";
 
 
 export const router = createBrowserRouter([
@@ -74,7 +75,7 @@ export const router = createBrowserRouter([
 
       // All users
       { path: "My-Loans", element: <MyLoans /> },
-      { path: "My-Profile", element: <MyProfile /> },
+      { path: "user-Profile", element: <UserProfile/> },
     ],
   },
 

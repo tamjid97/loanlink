@@ -92,8 +92,15 @@ const NavBar = () => {
           </div>
 
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 sm:block hidden rounded-full bg-yellow-400 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">L</span>
+                 {/* Logo Icon */}
+            <div
+              className="w-12 h-12 rounded-3xl
+              bg-gradient-to-br from-yellow-400 to-yellow-500
+              flex items-center justify-center
+              shadow-xl
+              transform transition-transform duration-300 group-hover:scale-110"
+            >
+              <span className="text-white font-extrabold text-xl tracking-tight">L</span>
             </div>
             <h1 className="text-3xl font-extrabold select-none">
               <span className="text-yellow-500">Loan</span>
@@ -135,7 +142,7 @@ const NavBar = () => {
               />
               <button
                 onClick={handleLogOut}
-                className="btn btn-sm bg-red-500 text-white"
+                className="btn btn-error btn-sm  text-white"
               >
                 Log Out
               </button>
