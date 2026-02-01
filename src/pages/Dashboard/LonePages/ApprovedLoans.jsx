@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
 
 const ApprovedLoans = () => {
   const axiosSecure = useAxiosSecure();
+  const { user } = useAuth(); // get current user
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch approved loans
+  // Fetch approved loans for current user
   const { data: loans = [], isLoading } = useQuery({
-    queryKey: ["approved-loans"],
+    queryKey: ["approved-loans", user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get("/loan");
+      if (!user?.email) return [];
+      const res = await axiosSecure.get(`/loan-applications?email=${user.email}`);
       return res.data;
     },
   });
@@ -92,26 +95,12 @@ const ApprovedLoans = () => {
             </button>
             <h2 className="text-2xl font-bold text-primary mb-4 text-center">Loan Details</h2>
             <div className="space-y-3">
-              <p>
-                <span className="font-semibold">Loan ID:</span> {selectedLoan._id}
-              </p>
-              <p>
-                <span className="font-semibold">Borrower:</span>{" "}
-                {selectedLoan.createdBy?.name || "N/A"} ({selectedLoan.createdBy?.email || "N/A"})
-              </p>
-              <p>
-                <span className="font-semibold">Amount:</span> {selectedLoan.amount || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Approved Date:</span>{" "}
-                {selectedLoan.approvedAt ? new Date(selectedLoan.approvedAt).toLocaleDateString() : "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Status:</span> {selectedLoan.status}
-              </p>
-              <p>
-                <span className="font-semibold">Description:</span> {selectedLoan.description || "N/A"}
-              </p>
+              <p><span className="font-semibold">Loan ID:</span> {selectedLoan._id}</p>
+              <p><span className="font-semibold">Borrower:</span> {selectedLoan.createdBy?.name || "N/A"} ({selectedLoan.createdBy?.email || "N/A"})</p>
+              <p><span className="font-semibold">Amount:</span> {selectedLoan.amount || "N/A"}</p>
+              <p><span className="font-semibold">Approved Date:</span> {selectedLoan.approvedAt ? new Date(selectedLoan.approvedAt).toLocaleDateString() : "N/A"}</p>
+              <p><span className="font-semibold">Status:</span> {selectedLoan.status}</p>
+              <p><span className="font-semibold">Description:</span> {selectedLoan.description || "N/A"}</p>
             </div>
           </div>
         </div>

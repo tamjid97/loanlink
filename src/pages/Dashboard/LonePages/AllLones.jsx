@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import useAuth from "../../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 
 const AllLoan = () => {
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();
 
+  // Fetch all loans
   const { data: loans = [], isLoading, refetch } = useQuery({
     queryKey: ["dashboard-all-loans"],
     queryFn: async () => {
@@ -25,15 +24,22 @@ const AllLoan = () => {
 
   const openUpdateModal = (loan) => {
     setSelectedLoan(loan);
-    // prefill all form fields
+
     setValue("loanTitle", loan.loanTitle);
     setValue("category", loan.category);
     setValue("interestRate", loan.interestRate);
     setValue("maxLoanLimit", loan.maxLoanLimit);
     setValue("description", loan.description);
-    setValue("emiPlans", loan.emiPlans);
-    setValue("requiredDocuments", loan.requiredDocuments);
-    setValue("showOnHome", loan.showOnHome);
+
+    // ✅ emiPlans যদি array হয়, join করো, না হলে string ধরো
+    const emiPlansValue = Array.isArray(loan.emiPlans)
+      ? loan.emiPlans.join(", ")
+      : loan.emiPlans || "";
+    setValue("emiPlans", emiPlansValue);
+
+    setValue("requiredDocuments", loan.requiredDocuments || "");
+    setValue("showOnHome", !!loan.showOnHome);
+
     setIsModalOpen(true);
   };
 
@@ -48,7 +54,7 @@ const AllLoan = () => {
     try {
       let loanImageURL = selectedLoan.loanImage;
 
-      // check if new image uploaded
+      // যদি নতুন image আপলোড হয়
       if (data.loanImage && data.loanImage[0]) {
         const formData = new FormData();
         formData.append("image", data.loanImage[0]);
@@ -62,6 +68,7 @@ const AllLoan = () => {
       const updatedData = {
         ...data,
         loanImage: loanImageURL,
+        emiPlans: data.emiPlans.split(",").map((p) => p.trim()),
       };
 
       await axiosSecure.put(`/loan/${selectedLoan._id}`, updatedData);
@@ -75,13 +82,22 @@ const AllLoan = () => {
   };
 
   // ---------------- Show on Home toggle ----------------
-  const handleShowOnHome = async (id, status) => {
-    await axiosSecure.patch(`/loan/show-home/${id}`, { showOnHome: !status });
-    refetch();
+  const handleShowOnHome = async (loan) => {
+    if (!loan?._id) return;
+    try {
+      await axiosSecure.patch(`/loan/show-home/${loan._id}`, {
+        showOnHome: !loan.showOnHome,
+      });
+      Swal.fire("Updated!", "Loan show-on-home status updated.", "success");
+      refetch();
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to update loan.", "error");
+    }
   };
 
   // ---------------- Delete Loan ----------------
-  const handleDelete = async (id) => {
+  const handleDelete = async (loanId) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "This loan will be permanently deleted!",
@@ -92,9 +108,14 @@ const AllLoan = () => {
     });
 
     if (result.isConfirmed) {
-      await axiosSecure.delete(`/loan/${id}`);
-      refetch();
-      Swal.fire("Deleted!", "Loan has been deleted.", "success");
+      try {
+        await axiosSecure.delete(`/loan/${loanId}`);
+        refetch();
+        Swal.fire("Deleted!", "Loan has been deleted.", "success");
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "Failed to delete loan.", "error");
+      }
     }
   };
 
@@ -136,6 +157,9 @@ const AllLoan = () => {
                     src={loan.loanImage}
                     alt={loan.loanTitle}
                     className="w-14 h-14 rounded-lg object-cover"
+                    onError={(e) =>
+                      (e.target.src = "https://i.ibb.co/6bQ7J7F/loan.jpg")
+                    }
                   />
                 </td>
                 <td>{loan.loanTitle}</td>
@@ -146,8 +170,8 @@ const AllLoan = () => {
                   <input
                     type="checkbox"
                     className="toggle toggle-primary"
-                    checked={loan.showOnHome}
-                    onChange={() => handleShowOnHome(loan._id, loan.showOnHome)}
+                    checked={!!loan.showOnHome}
+                    onChange={() => handleShowOnHome(loan)}
                   />
                 </td>
                 <td className="flex gap-2">
@@ -171,7 +195,7 @@ const AllLoan = () => {
       </div>
 
       {/* --------- Update Modal --------- */}
-      {isModalOpen && (
+      {isModalOpen && selectedLoan && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-base-100 rounded-2xl p-6 w-full max-w-4xl relative shadow-lg">
             <button
@@ -198,7 +222,10 @@ const AllLoan = () => {
                 </div>
                 <div>
                   <label className="label font-semibold">Category</label>
-                  <select {...register("category", { required: true })} className="select select-bordered w-full">
+                  <select
+                    {...register("category", { required: true })}
+                    className="select select-bordered w-full"
+                  >
                     <option value="">Select category</option>
                     <option value="Personal">Personal Loan</option>
                     <option value="Business">Business Loan</option>
@@ -246,6 +273,7 @@ const AllLoan = () => {
                     type="text"
                     {...register("emiPlans", { required: true })}
                     className="input input-bordered w-full"
+                    placeholder="e.g. 3 months, 6 months, 12 months"
                   />
                 </div>
                 <div>
@@ -262,10 +290,18 @@ const AllLoan = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label font-semibold">Loan Image</label>
-                  <input type="file" {...register("loanImage")} className="file-input file-input-bordered w-full" />
+                  <input
+                    type="file"
+                    {...register("loanImage")}
+                    className="file-input file-input-bordered w-full"
+                  />
                 </div>
                 <div className="flex items-center gap-4 mt-6">
-                  <input type="checkbox" {...register("showOnHome")} className="toggle toggle-success" />
+                  <input
+                    type="checkbox"
+                    {...register("showOnHome")}
+                    className="toggle toggle-success"
+                  />
                   <span className="font-medium">Show this loan on Home page</span>
                 </div>
               </div>

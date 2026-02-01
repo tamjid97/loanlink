@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import Swal from "sweetalert2";
 
 const ApplicationLoans = () => {
   const axiosSecure = useAxiosSecure();
@@ -9,7 +8,7 @@ const ApplicationLoans = () => {
   const [selectedApp, setSelectedApp] = useState(null);
 
   // 🔥 Fetch all loan applications (Admin)
-  const { data: applications = [], isLoading, refetch } = useQuery({
+  const { data: applications = [], isLoading } = useQuery({
     queryKey: ["allLoanApplications"],
     queryFn: async () => {
       const res = await axiosSecure.get("/loan-applications");
@@ -71,7 +70,7 @@ const ApplicationLoans = () => {
                 <td className="font-mono text-xs">{app._id.slice(-6)}</td>
                 <td>{app.userName || `${app.firstName} ${app.lastName}`}</td>
                 <td>{app.userEmail}</td>
-                <td>{app.loanCategory}</td>
+                <td>{app.loanCategory || app.loanTitle}</td>
                 <td className="font-semibold">৳ {app.loanAmount}</td>
                 <td>
                   <span
@@ -107,42 +106,19 @@ const ApplicationLoans = () => {
             <h3 className="font-bold text-xl mb-4">Loan Application Details</h3>
 
             <div className="space-y-2 text-sm">
-              <p>
-                <b>User:</b> {selectedApp.firstName} {selectedApp.lastName}
-              </p>
-              <p>
-                <b>Email:</b> {selectedApp.userEmail}
-              </p>
-              <p>
-                <b>Loan Title:</b> {selectedApp.loanTitle}
-              </p>
-              <p>
-                <b>Category:</b> {selectedApp.loanCategory}
-              </p>
-              <p>
-                <b>Amount:</b> ৳ {selectedApp.loanAmount}
-              </p>
-              <p>
-                <b>Interest Rate:</b> {selectedApp.interestRate}%
-              </p>
-              <p>
-                <b>Status:</b> {selectedApp.status}
-              </p>
-              <p>
-                <b>Applied At:</b>{" "}
-                {new Date(selectedApp.date).toLocaleString()}
-              </p>
-              {selectedApp.documents && (
-                <p>
-                  <b>Documents:</b> {selectedApp.documents}
-                </p>
-              )}
+              <p><b>User:</b> {selectedApp.firstName} {selectedApp.lastName}</p>
+              <p><b>Email:</b> {selectedApp.userEmail}</p>
+              <p><b>Loan Title:</b> {selectedApp.loanTitle}</p>
+              <p><b>Category:</b> {selectedApp.loanCategory}</p>
+              <p><b>Amount:</b> ৳ {selectedApp.loanAmount}</p>
+              <p><b>Interest Rate:</b> {selectedApp.interestRate}%</p>
+              <p><b>Status:</b> {selectedApp.status}</p>
+              <p><b>Applied At:</b> {new Date(selectedApp.createdAt || selectedApp.date).toLocaleString()}</p>
+              {selectedApp.documents && <p><b>Documents:</b> {selectedApp.documents}</p>}
             </div>
 
             <div className="modal-action">
-              <button onClick={() => setSelectedApp(null)} className="btn">
-                Close
-              </button>
+              <button onClick={() => setSelectedApp(null)} className="btn">Close</button>
             </div>
           </div>
         </dialog>

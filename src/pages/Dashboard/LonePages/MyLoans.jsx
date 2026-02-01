@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
@@ -8,17 +8,20 @@ import { Link } from "react-router-dom";
 const MyLoanApplications = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const [selectedLoan, setSelectedLoan] = useState(null);
 
+  // Fetch user's loan applications
   const { data: applications = [], isLoading, refetch } = useQuery({
     queryKey: ["myLoanApplications", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
       const email = user.email.toLowerCase();
-      const res = await axiosSecure.get(`/loan-application?email=${email}`);
+      const res = await axiosSecure.get(`/loan-applications?email=${email}`);
       return res.data;
     },
   });
 
+  // Cancel loan application
   const handleCancel = async (id) => {
     const confirm = await Swal.fire({
       title: "Cancel Application?",
@@ -63,25 +66,17 @@ const MyLoanApplications = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {applications.map((app) => (
                 <tr key={app._id}>
-                  <td className="font-mono text-xs">
-                    {app.loanId?.slice(-6)}
-                  </td>
-
+                  <td className="font-mono text-xs">{app.loanId?.slice(-6)}</td>
                   <td>
                     <p className="font-semibold">{app.loanTitle}</p>
                     <p className="text-sm text-gray-500">
                       Interest: {app.interestRate}%
                     </p>
                   </td>
-
-                  <td className="font-semibold">
-                    ৳ {app.loanAmount}
-                  </td>
-
+                  <td className="font-semibold">৳ {app.loanAmount}</td>
                   <td>
                     <span
                       className={`badge ${
@@ -95,15 +90,14 @@ const MyLoanApplications = () => {
                       {app.status}
                     </span>
                   </td>
-
                   <td className="space-x-2">
                     {/* View */}
-                    <Link
-                      to={`/dashboard/loan/${app._id}`}
+                    <button
+                      onClick={() => setSelectedLoan(app)}
                       className="btn btn-xs btn-info"
                     >
                       View
-                    </Link>
+                    </button>
 
                     {/* Cancel */}
                     {app.status === "Pending" && (
@@ -117,9 +111,7 @@ const MyLoanApplications = () => {
 
                     {/* Pay / Paid */}
                     {app.applicationFeeStatus === "Unpaid" ? (
-                      <button className="btn btn-xs btn-primary">
-                        Pay
-                      </button>
+                      <button className="btn btn-xs btn-primary">Pay</button>
                     ) : (
                       <span className="badge badge-success">Paid</span>
                     )}
@@ -128,6 +120,55 @@ const MyLoanApplications = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal */}
+      {selectedLoan && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-11/12 max-w-lg relative">
+            <button
+              onClick={() => setSelectedLoan(null)}
+              className="absolute top-3 right-3 btn btn-sm btn-circle btn-ghost"
+            >
+              ✕
+            </button>
+            <h2 className="text-2xl font-bold mb-4">{selectedLoan.loanTitle}</h2>
+            <p>
+              <strong>Loan ID:</strong> {selectedLoan.loanId}
+            </p>
+            <p>
+              <strong>Amount:</strong> ৳ {selectedLoan.loanAmount}
+            </p>
+            <p>
+              <strong>Interest Rate:</strong> {selectedLoan.interestRate}%
+            </p>
+            <p>
+              <strong>Status:</strong>{" "}
+              <span
+                className={`badge ${
+                  selectedLoan.status === "Pending"
+                    ? "badge-warning"
+                    : selectedLoan.status === "Approved"
+                    ? "badge-success"
+                    : "badge-error"
+                }`}
+              >
+                {selectedLoan.status}
+              </span>
+            </p>
+            <p>
+              <strong>Available EMI Plans:</strong>{" "}
+              {Array.isArray(selectedLoan.emiPlans)
+                ? selectedLoan.emiPlans.join(", ")
+                : selectedLoan.emiPlans || "N/A"}
+            </p>
+            {selectedLoan.description && (
+              <p className="mt-2">
+                <strong>Description:</strong> {selectedLoan.description}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
