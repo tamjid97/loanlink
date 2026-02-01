@@ -1,39 +1,30 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import useAuth from "../../../hooks/useAuth";
 
 const ApprovedLoans = () => {
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth(); // get current user
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch approved loans for current user
-  const { data: loans = [], isLoading } = useQuery({
-    queryKey: ["approved-loans", user?.email],
+  // Fetch all applications and filter only Approved
+  const { data: loans = [], isLoading, refetch } = useQuery({
+    queryKey: ["approved-loans"],
     queryFn: async () => {
-      if (!user?.email) return [];
-      const res = await axiosSecure.get(`/loan-applications?email=${user.email}`);
-      return res.data;
+      const res = await axiosSecure.get("/loan-applications");
+      return res.data.filter(loan => loan.status === "Approved");
     },
   });
 
-  const openModal = (loan) => {
-    setSelectedLoan(loan);
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setSelectedLoan(null);
-    setIsModalOpen(false);
-  };
+  const openModal = (loan) => { setSelectedLoan(loan); setIsModalOpen(true); };
+  const closeModal = () => { setSelectedLoan(null); setIsModalOpen(false); };
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
+  if (isLoading) return (
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -52,28 +43,30 @@ const ApprovedLoans = () => {
             </tr>
           </thead>
           <tbody>
-            {loans.length > 0 ? (
-              loans.map((loan, index) => (
-                <tr key={loan._id}>
-                  <td>{index + 1}</td>
-                  <td>{loan._id}</td>
-                  <td>
-                    <p className="font-semibold">{loan.createdBy?.name || "N/A"}</p>
-                    <p className="text-sm text-gray-500">{loan.createdBy?.email || "N/A"}</p>
-                  </td>
-                  <td>{loan.amount || "N/A"}</td>
-                  <td>{loan.approvedAt ? new Date(loan.approvedAt).toLocaleDateString() : "N/A"}</td>
-                  <td>
-                    <button
-                      onClick={() => openModal(loan)}
-                      className="btn btn-sm btn-info hover:scale-105 transition-transform duration-200"
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+            {loans.length > 0 ? loans.map((loan, index) => (
+              <tr key={loan._id}>
+                <td>{index + 1}</td>
+                <td>{loan._id || "N/A"}</td>
+                <td>
+                  <p className="font-semibold">{loan.firstName || "N/A"} {loan.lastName || ""}</p>
+                  <p className="text-sm text-gray-500">{loan.userEmail || "N/A"}</p>
+                </td>
+                <td>{loan.loanAmount || "N/A"}</td>
+                <td>
+                  {loan.approvedAt?.$date
+                    ? new Date(loan.approvedAt.$date).toLocaleDateString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <button 
+                    onClick={() => openModal(loan)} 
+                    className="btn btn-sm btn-info"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            )) : (
               <tr>
                 <td colSpan="6" className="text-center py-6 text-gray-500">
                   No approved loans found.
@@ -87,20 +80,29 @@ const ApprovedLoans = () => {
       {isModalOpen && selectedLoan && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-base-100 rounded-2xl p-6 w-full max-w-2xl relative shadow-lg">
-            <button
-              className="absolute top-4 right-4 btn btn-sm btn-circle btn-ghost"
+            <button 
+              className="absolute top-4 right-4 btn btn-sm btn-circle btn-ghost" 
               onClick={closeModal}
             >
               ✕
             </button>
             <h2 className="text-2xl font-bold text-primary mb-4 text-center">Loan Details</h2>
             <div className="space-y-3">
-              <p><span className="font-semibold">Loan ID:</span> {selectedLoan._id}</p>
-              <p><span className="font-semibold">Borrower:</span> {selectedLoan.createdBy?.name || "N/A"} ({selectedLoan.createdBy?.email || "N/A"})</p>
-              <p><span className="font-semibold">Amount:</span> {selectedLoan.amount || "N/A"}</p>
-              <p><span className="font-semibold">Approved Date:</span> {selectedLoan.approvedAt ? new Date(selectedLoan.approvedAt).toLocaleDateString() : "N/A"}</p>
-              <p><span className="font-semibold">Status:</span> {selectedLoan.status}</p>
-              <p><span className="font-semibold">Description:</span> {selectedLoan.description || "N/A"}</p>
+              <p><span className="font-semibold">Loan ID:</span> {selectedLoan._id || "N/A"}</p>
+              <p>
+                <span className="font-semibold">Borrower:</span> 
+                {selectedLoan.firstName || "N/A"} {selectedLoan.lastName || ""} ({selectedLoan.userEmail || "N/A"})
+              </p>
+              <p><span className="font-semibold">Amount:</span> {selectedLoan.loanAmount || "N/A"}</p>
+              <p>
+                <span className="font-semibold">Approved Date:</span>{" "}
+                {selectedLoan.approvedAt?.$date
+                  ? new Date(selectedLoan.approvedAt.$date).toLocaleDateString()
+                  : "N/A"}
+              </p>
+              <p><span className="font-semibold">Status:</span> {selectedLoan.status || "N/A"}</p>
+              <p><span className="font-semibold">Reason:</span> {selectedLoan.loanReason || "N/A"}</p>
+              <p><span className="font-semibold">Extra Notes:</span> {selectedLoan.extraNotes || "N/A"}</p>
             </div>
           </div>
         </div>
