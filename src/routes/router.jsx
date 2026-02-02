@@ -34,6 +34,7 @@ import Payment from "../pages/Dashboard/LonePages/Payment";
 
 // ---------- Not Found ----------
 import NotFound from "../pages/Dashboard/NotFound";
+import PaymentSuccess from "../pages/Dashboard/LonePages/PaymentSuccess";
 
 export const router = createBrowserRouter([
   // =====================
@@ -129,6 +130,7 @@ export const router = createBrowserRouter([
       // ----- All Logged-in Users -----
       { path: "My-Loans", element: <MyLoans /> },
       { path: "user-Profile", element: <UserProfile /> },
+      { path: "payment-success", element: <PaymentSuccess/> },
 
       // ✅ PAYMENT (FIXED)
       { path: "payment/:id", element: <Payment /> },
