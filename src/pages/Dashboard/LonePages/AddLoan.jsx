@@ -20,7 +20,7 @@ const AddLoan = () => {
         formData.append("image", data.loanImage[0]);
         const imgRes = await axios.post(
           `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`,
-          formData
+          formData,
         );
         loanImageURL = imgRes.data.data.url;
       }
@@ -48,6 +48,7 @@ const AddLoan = () => {
 
       if (result.isConfirmed) {
         await axios.post("http://localhost:3000/loan", finalData);
+
         Swal.fire({
           title: "Success!",
           text: "Loan added successfully!",
@@ -91,7 +92,10 @@ const AddLoan = () => {
 
             <div>
               <label className="label font-semibold">Category</label>
-              <select {...register("category", { required: true })} className="select select-bordered w-full">
+              <select
+                {...register("category", { required: true })}
+                className="select select-bordered w-full"
+              >
                 <option value="">Select category</option>
                 <option value="Personal">Personal Loan</option>
                 <option value="Business">Business Loan</option>
@@ -168,12 +172,20 @@ const AddLoan = () => {
               />
             </div>
             <div className="flex items-center gap-4 mt-6">
-              <input type="checkbox" {...register("showOnHome")} className="toggle toggle-success" />
+              <input
+                type="checkbox"
+                {...register("showOnHome")}
+                className="toggle toggle-success"
+              />
               <span className="font-medium">Show this loan on Home page</span>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
+          <button
+            type="submit"
+            className="btn btn-primary w-full mt-4"
+            disabled={loading}
+          >
             {loading ? "Adding Loan..." : "Add Loan"}
           </button>
         </form>

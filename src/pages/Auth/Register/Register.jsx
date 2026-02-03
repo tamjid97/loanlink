@@ -15,44 +15,45 @@ const Register = () => {
 
   const { registerUser, updateUserProfile } = useAuth();
   const navigate = useNavigate();
-const handleRegistration = async (data) => {
-  try {
-    // 1️⃣ Image upload
-    const formData = new FormData();
-    formData.append("image", data.photo[0]);
+  const handleRegistration = async (data) => {
+    try {
+      // 1️⃣ Image upload
+      const formData = new FormData();
+      formData.append("image", data.photo[0]);
 
-    const img_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`;
-    const imgRes = await axios.post(img_API_URL, formData);
-    const photoURL = imgRes.data.data.url;
+      const img_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host}`;
+      const imgRes = await axios.post(img_API_URL, formData);
+      const photoURL = imgRes.data.data.url;
 
-    // 2️⃣ Firebase register
-    const result = await registerUser(data.email, data.password);
-    const user = result.user;
+      // 2️⃣ Firebase register
+      const result = await registerUser(data.email, data.password);
+      const user = result.user;
 
-    // 3️⃣ Update Firebase profile
-    await updateUserProfile({
-      displayName: data.name,
-      photoURL,
-    });
+      // 3️⃣ Update Firebase profile
 
-    // 4️⃣ Save user to MongoDB ✅ (NEW PART)
-    const userInfo = {
-      name: data.name,
-      email: user.email,
-      role: data.role,
-      photoURL,
-    };
+      // 4️⃣ Save user to MongoDB ✅ (NEW PART)
+      const userInfo = {
+        name: data.name,
+        email: user.email,
+        role: data.role,
+        photoURL,
+      };
 
-    await axios.post("http://localhost:3000/users", userInfo);
+      await axios.post("http://localhost:3000/users", userInfo);
 
-    toast.success("Registration successful 🎉");
-    navigate("/");
-  } catch (err) {
-    console.error(err);
-    toast.error("Registration failed");
-  }
-};
 
+      await updateUserProfile({
+        displayName: data.name,
+        photoURL,
+      });
+
+      toast.success("Registration successful 🎉");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      toast.error("Registration failed");
+    }
+  };
 
   return (
     <div className="card bg-base-100 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
@@ -105,9 +106,7 @@ const handleRegistration = async (data) => {
             <p className="text-red-500">Minimum 6 characters</p>
           )}
           {errors.password?.type === "pattern" && (
-            <p className="text-red-500">
-              Must contain uppercase & lowercase
-            </p>
+            <p className="text-red-500">Must contain uppercase & lowercase</p>
           )}
 
           {/* 🔹 New Role Dropdown */}
