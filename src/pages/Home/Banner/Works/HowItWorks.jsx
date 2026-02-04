@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -23,12 +24,26 @@ const steps = [
   },
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
+  }),
+};
+
 const HowItWorks = () => {
   return (
-    <section className=" py-28">
+    <section className="py-28 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8 } }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto text-center"
+        >
           <span className="text-sm font-semibold tracking-widest text-yellow-500 uppercase">
             Process Overview
           </span>
@@ -41,13 +56,19 @@ const HowItWorks = () => {
             Our operational framework is designed to ensure security, transparency,
             and efficiency at every stage of the loan lifecycle.
           </p>
-        </div>
+        </motion.div>
 
         {/* Process Grid */}
         <div className="mt-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map((step) => (
-            <div
+          {steps.map((step, index) => (
+            <motion.div
               key={step.id}
+              custom={index}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={cardVariants}
+              whileHover={{ scale: 1.05, boxShadow: "0 15px 25px rgba(0,0,0,0.15)" }}
               className="
                 relative
                 rounded-xl
@@ -55,7 +76,6 @@ const HowItWorks = () => {
                 border-gray-200
                 p-10
                 bg-white
-                hover:border-yellow-400
                 transition
               "
             >
@@ -76,7 +96,7 @@ const HowItWorks = () => {
               <p className="mt-4 text-sm text-gray-600 leading-relaxed">
                 {step.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

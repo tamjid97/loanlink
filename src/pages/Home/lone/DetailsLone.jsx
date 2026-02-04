@@ -1,20 +1,18 @@
+// DetailsLone.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const DetailsLone = () => {
   const { id } = useParams();
-  const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
   const [loan, setLoan] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState(null);
 
-  // Fetch loan details
   useEffect(() => {
     const fetchLoan = async () => {
+      setLoading(true);
       try {
         const res = await axiosSecure.get(`/loan/${id}`);
         const data = {
@@ -24,8 +22,9 @@ const DetailsLone = () => {
             : res.data.emiPlans?.split(",") || [],
         };
         setLoan(data);
-      } catch (error) {
-        console.error("Error fetching loan:", error);
+      } catch (err) {
+        console.error("Error fetching loan:", err);
+        setLoan(null);
       } finally {
         setLoading(false);
       }
@@ -34,20 +33,13 @@ const DetailsLone = () => {
     fetchLoan();
   }, [id, axiosSecure]);
 
-  // Fetch user role from backend
-  useEffect(() => {
-    if (user?.email) {
-      axiosSecure
-        .get(`/users/${user.email}/role`)
-        .then((res) => setRole(res.data.role))
-        .catch((err) => console.error("Error fetching role:", err));
-    }
-  }, [user, axiosSecure]);
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[70vh] bg-gray-50">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-900">
+        <span className="loading loading-spinner loading-lg text-sky-400"></span>
+        <p className="mt-4 text-gray-300 text-sm tracking-wide">
+          Loading loan details...
+        </p>
       </div>
     );
   }
@@ -59,8 +51,6 @@ const DetailsLone = () => {
       </p>
     );
   }
-
-  const canApply = role === "user" || role === "borrower";
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -101,13 +91,17 @@ const DetailsLone = () => {
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
                     Interest Rate
                   </td>
-                  <td className="px-4 py-3 text-gray-800">{loan.interestRate}%</td>
+                  <td className="px-4 py-3 text-gray-800">
+                    {loan.interestRate}%
+                  </td>
                 </tr>
                 <tr className="hover:bg-gray-50 transition-colors">
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
                     Max Limit
                   </td>
-                  <td className="px-4 py-3 text-gray-800">${loan.maxLoanLimit}</td>
+                  <td className="px-4 py-3 text-gray-800">
+                    ${loan.maxLoanLimit}
+                  </td>
                 </tr>
                 <tr className="hover:bg-gray-50 transition-colors">
                   <td className="font-semibold px-4 py-3 bg-gray-100 text-gray-700">
@@ -132,17 +126,15 @@ const DetailsLone = () => {
             </table>
           </div>
 
-          {/* Apply Button */}
-          {canApply && (
-            <div className="mt-6">
-              <Link
-                to={`/apply-loan/${loan._id}`}
-                className="btn btn-gradient w-full rounded-xl hover:scale-105 transition-transform duration-300 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg"
-              >
-                Apply Now
-              </Link>
-            </div>
-          )}
+          {/* Apply Button - always show */}
+          <div className="mt-6">
+            <Link
+              to={`/apply-loan/${loan._id}`}
+              className="btn btn-gradient w-full rounded-xl hover:scale-105 transition-transform duration-300 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg"
+            >
+              Apply Now
+            </Link>
+          </div>
         </div>
       </div>
     </div>

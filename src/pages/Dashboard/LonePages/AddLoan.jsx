@@ -47,7 +47,7 @@ const AddLoan = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.post("http://localhost:3000/loan", finalData);
+        await axios.post("https://lone-link-server.vercel.app/loan", finalData);
 
         Swal.fire({
           title: "Success!",

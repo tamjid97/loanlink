@@ -39,8 +39,7 @@ const Register = () => {
         photoURL,
       };
 
-      await axios.post("http://localhost:3000/users", userInfo);
-
+      await axios.post("https://lone-link-server.vercel.app/users", userInfo);
 
       await updateUserProfile({
         displayName: data.name,

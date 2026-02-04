@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -8,8 +8,10 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../../firebase/firebase.init.js";
-import { AuthContext } from "./AuthContext";
+import { auth } from "../../firebase/firebase.init";
+
+// ✅ corrected name
+export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -32,31 +34,35 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, googleProvider);
   };
 
-  // logout function can be added here
   const logout = () => {
     setLoading(true);
     return signOut(auth);
-  }
-
+  };
 
   const updateUserProfile = (profile) => {
-    return updateProfile(auth.currentUser, profile)
-  }
+    return updateProfile(auth.currentUser, profile);
+  };
 
-  useEffect(() =>{
-
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
       setLoading(false);
-    })
+    });
     return () => unsubscribe();
-  }, []  )
+  }, []);
+
+  const authInfo = {
+    user,
+    loading,
+    registerUser,
+    signInUser,
+    signInGoogle,
+    logout,
+    updateUserProfile,
+  };
 
   return (
-    <AuthContext.Provider
-      value={{ registerUser, signInUser, signInGoogle, user, loading, logout,updateUserProfile }}
-    >
+    <AuthContext.Provider value={authInfo}>
       {children}
     </AuthContext.Provider>
   );
