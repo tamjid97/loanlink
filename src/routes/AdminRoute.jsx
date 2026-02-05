@@ -1,11 +1,11 @@
-// routes/AdminRoute.js
 import React from "react";
 import { Navigate } from "react-router-dom";
 import useRole from "../hooks/useRole";
-import UseAuth from "../hooks/UseAuth";
+import useAuth from "../hooks/useAuth";
 
 const AdminRoute = ({ children }) => {
-  const { user } = UseAuth();
+  const auth = useAuth() || {};
+  const user = auth.user;
   const { role, isLoading } = useRole();
 
   if (isLoading) return <div>Loading...</div>;
