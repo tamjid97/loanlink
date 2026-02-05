@@ -35,7 +35,7 @@ const cardVariants = {
 
 const HowItWorks = () => {
   return (
-    <section className="py-28 bg-gray-50">
+    <section className="py-28">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
